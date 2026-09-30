@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>研究室Webサイト：GitHub側の設定手順</title>
+  <meta name="description" content="Academic PagesをGitHub Pagesで公開するためのGitHub側の設定手順">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182230;
+      --muted: #596579;
+      --line: #d8dee8;
+      --surface: #ffffff;
+      --soft: #f5f7fa;
+      --accent: #1261a0;
+      --accent-soft: #eaf3fb;
+      --success: #176b45;
+      --success-soft: #e9f7ef;
+      --warning: #815600;
+      --warning-soft: #fff6df;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP",
+        "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    a { color: var(--accent); }
+    a:hover { text-decoration-thickness: 2px; }
+
+    .page {
+      width: min(960px, calc(100% - 32px));
+      margin: 32px auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgb(26 44 68 / 8%);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 48px clamp(24px, 6vw, 64px) 40px;
+      color: #fff;
+      background: linear-gradient(135deg, #0d3d66, #1261a0);
+    }
+
+    header p {
+      max-width: 720px;
+      margin: 12px 0 0;
+      color: #e5f2fc;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1.35;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.45rem;
+      line-height: 1.45;
+    }
+
+    h3 { margin: 24px 0 8px; font-size: 1.08rem; }
+    p { margin: 0 0 16px; }
+    ul, ol { margin: 8px 0 16px; padding-left: 1.5em; }
+    li + li { margin-top: 6px; }
+
+    main { padding: 16px clamp(24px, 6vw, 64px) 56px; }
+
+    section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:last-child { border-bottom: 0; }
+
+    .summary {
+      margin-top: 16px;
+      padding: 18px 20px;
+      border-left: 5px solid var(--success);
+      border-radius: 8px;
+      background: var(--success-soft);
+    }
+
+    .note, .warning {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border-radius: 8px;
+    }
+
+    .note { background: var(--accent-soft); }
+    .warning { background: var(--warning-soft); color: #5f4100; }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+    }
+
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      margin: 0 0 14px;
+      padding-left: 42px;
+    }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      top: 2px;
+      left: 0;
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    table {
+      width: 100%;
+      margin: 14px 0 20px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: var(--soft); }
+
+    code {
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      background: #edf1f5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 14px 0 20px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #17212e;
+      color: #f2f6fa;
+      line-height: 1.55;
+    }
+
+    pre code { padding: 0; background: transparent; color: inherit; }
+
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { position: relative; padding-left: 30px; }
+    .checklist li::before {
+      content: "□";
+      position: absolute;
+      left: 0;
+      color: var(--success);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 22px clamp(24px, 6vw, 64px);
+      background: #edf1f5;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .page { width: 100%; margin: 0; border: 0; box-shadow: none; }
+      header { background: #fff; color: #000; padding-top: 20px; }
+      header p { color: #333; }
+      section { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+      a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header>
+      <h1>研究室Webサイト：GitHub側の設定手順</h1>
+      <p>Academic Pages（Jekyll）をGitHub Pagesで無料公開するための、Organization作成から公開確認までの手順です。</p>
+    </header>
+
+    <main>
+      <div class="summary">
+        <strong>推奨構成：</strong>
+        研究室用のGitHub Organizationを作成し、その配下に公開リポジトリ
+        <code>&lt;Organization名&gt;.github.io</code> を置きます。個人アカウントへの依存を避けられ、将来の引き継ぎが容易です。
+      </div>
+
+      <section>
+        <h2>1. GitHub Organizationを作成する</h2>
+        <ol class="steps">
+          <li>GitHub右上のプロフィール画像から <code>Settings</code> を開きます。</li>
+          <li><code>Organizations</code> → <code>New organization</code> と進みます。</li>
+          <li>無料プランの <code>GitHub Free</code> を選択します。</li>
+          <li>Organization名と連絡先メールアドレスを設定します。</li>
+        </ol>
+
+        <p>例えばOrganization名を <code>future-coexistence-lab</code> とすると、公開URLは次のようになります。</p>
+        <pre><code>https://future-coexistence-lab.github.io/</code></pre>
+        <p>Organization名はURLに含まれるため、短く分かりやすい英小文字の名称が適しています。</p>
+        <p><a href="https://docs.github.com/ja/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch">GitHub公式：Organizationを新規作成する</a></p>
+      </section>
+
+      <section>
+        <h2>2. 管理者とメンバーを設定する</h2>
+        <p>管理継続性を確保するため、可能であればOwnerを2名登録します。</p>
+
+        <table>
+          <thead>
+            <tr><th>対象者</th><th>推奨権限</th><th>用途</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>主担当教員</td><td>Owner</td><td>Organization全体とサイトの管理</td></tr>
+            <tr><td>引き継ぎ担当の教員・職員</td><td>Owner</td><td>不在時や異動時の管理継続</td></tr>
+            <tr><td>更新を担当する学生</td><td>Write</td><td>記事や業績情報の編集</td></tr>
+            <tr><td>閲覧のみのメンバー</td><td>原則不要</td><td>公開サイトは誰でも閲覧可能</td></tr>
+          </tbody>
+        </table>
+
+        <p>メンバーの追加は <code>Organization → People → Invite member</code> から行います。各Ownerは二要素認証を有効にしておくことを推奨します。</p>
+        <p><a href="https://docs.github.com/ja/organizations/managing-peoples-access-to-your-organization-with-roles/maintaining-ownership-continuity-for-your-organization">GitHub公式：Organizationの所有権の継続性を維持する</a></p>
+      </section>
+
+      <section>
+        <h2>3. GitHub Pagesの公開を許可する</h2>
+        <p>Organizationの設定で、公開GitHub Pagesサイトを作成できることを確認します。</p>
+        <pre><code>Organization
+└─ Settings
+   └─ Member privileges
+      └─ Pages creation → Publicを許可</code></pre>
+        <p><a href="https://docs.github.com/ja/organizations/managing-organization-settings/managing-the-publication-of-github-pages-sites-for-your-organization">GitHub公式：OrganizationのGitHub Pages公開を管理する</a></p>
+      </section>
+
+      <section>
+        <h2>4. 公開リポジトリを作成する</h2>
+        <p>Organizationの画面から <code>New repository</code> を選び、次のように設定します。</p>
+
+        <table>
+          <tbody>
+            <tr><th>項目</th><th>設定例</th></tr>
+            <tr><td>Owner</td><td><code>future-coexistence-lab</code></td></tr>
+            <tr><td>Repository name</td><td><code>future-coexistence-lab.github.io</code></td></tr>
+            <tr><td>Visibility</td><td><code>Public</code></td></tr>
+            <tr><td>Add a README file</td><td>チェックしない</td></tr>
+            <tr><td>Add .gitignore</td><td>None</td></tr>
+            <tr><td>License</td><td>None、または後から設定</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          既にローカルにサイト一式があるため、GitHub側ではREADMEなどを初期作成しません。空のリポジトリにすることで、最初のpush時の競合を避けられます。
+        </div>
+
+        <p>Organizationサイトにする場合、リポジトリ名は必ず次の形式にします。</p>
+        <pre><code>&lt;Organization名&gt;.github.io</code></pre>
+        <p><a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/what-is-github-pages">GitHub公式：GitHub Pagesとは</a></p>
+      </section>
+
+      <section>
+        <h2>5. ローカルのJekyll設定を変更する</h2>
+        <p>リポジトリを作成したら、ローカルサイトの <code>_config.yml</code> を実際のOrganization名に合わせます。</p>
+        <pre><code>url: "https://future-coexistence-lab.github.io"
+baseurl: ""
+repository: "future-coexistence-lab/future-coexistence-lab.github.io"</code></pre>
+        <p>OrganizationサイトをルートURLで公開するため、<code>baseurl</code> は空欄のままにします。</p>
+      </section>
+
+      <section>
+        <h2>6. GitHubへ初回アップロードする</h2>
+        <p>ターミナルで次のコマンドを実行します。Organization名は実際に取得した名称へ置き換えてください。</p>
+        <pre><code>cd /Users/t.oshima-hino/Repos/OK_lab_HP
+
+git init -b main
+git add .
+git commit -m "Initial laboratory website"
+
+git remote add origin https://github.com/future-coexistence-lab/future-coexistence-lab.github.io.git
+git push -u origin main</code></pre>
+        <div class="note">
+          GitHubへの認証を求められた場合は、ブラウザ認証、GitHub CLI、またはPersonal Access Tokenを使用します。GitHubアカウントの通常のパスワードではpushできません。
+        </div>
+      </section>
+
+      <section>
+        <h2>7. GitHub Pagesを有効化する</h2>
+        <p>アップロード後、対象リポジトリで次の画面を開きます。</p>
+        <pre><code>Repository
+└─ Settings
+   └─ Pages
+      └─ Build and deployment</code></pre>
+
+        <table>
+          <tbody>
+            <tr><th>項目</th><th>設定</th></tr>
+            <tr><td>Source</td><td><code>Deploy from a branch</code></td></tr>
+            <tr><td>Branch</td><td><code>main</code></td></tr>
+            <tr><td>Folder</td><td><code>/(root)</code></td></tr>
+            <tr><td>Custom domain</td><td>空欄</td></tr>
+            <tr><td>Enforce HTTPS</td><td>有効</td></tr>
+          </tbody>
+        </table>
+
+        <p>設定後、<code>Save</code> を押します。今回のサンプルはJekyllファイルをリポジトリ直下に置いているため、公開フォルダは <code>/(root)</code> です。</p>
+        <p><a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub公式：GitHub Pagesサイトの公開元を設定する</a></p>
+      </section>
+
+      <section>
+        <h2>8. 公開結果を確認する</h2>
+        <ol class="steps">
+          <li>リポジトリ上部の <code>Actions</code> を開きます。</li>
+          <li><code>pages build and deployment</code> が緑色のチェックになるまで待ちます。</li>
+          <li><code>https://&lt;Organization名&gt;.github.io/</code> にアクセスします。</li>
+        </ol>
+
+        <p>公開や更新の反映には数分かかる場合があります。失敗した場合は、Actionsの失敗した処理を開いてエラーログを確認します。</p>
+
+        <h3>代表的なエラー原因</h3>
+        <ul>
+          <li><code>_config.yml</code> のインデントや記号の誤り</li>
+          <li>Markdown先頭のfront matterの記述不備</li>
+          <li>画像パスやファイル名の大文字・小文字の不一致</li>
+          <li>Jekyllテーマまたはプラグインの設定不整合</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>9. 運用開始後の権限と保護設定</h2>
+        <p>初期段階は主担当教員が <code>main</code> ブランチへ直接pushする運用で構いません。複数人で更新する段階になったら、次の設定を検討します。</p>
+        <pre><code>Repository → Settings → Rules → Rulesets</code></pre>
+        <ul>
+          <li><code>main</code> ブランチの削除を禁止</li>
+          <li>force pushを禁止</li>
+          <li>Pull Request経由の変更を必須化</li>
+          <li>必要に応じて1名以上の承認を必須化</li>
+        </ul>
+        <p>Pull Request必須化は更新手順が増えるため、Git操作に慣れてから導入するのが現実的です。</p>
+      </section>
+
+      <section>
+        <h2>10. 公開情報の注意点</h2>
+        <div class="warning">
+          GitHub Pages用の公開リポジトリでは、HTMLやMarkdownだけでなく、画像や設定ファイルも原則として誰でも閲覧できます。
+        </div>
+        <p>次の情報はリポジトリへ登録しないでください。</p>
+        <ul>
+          <li>非公開の学生名簿や個人の電話番号</li>
+          <li>私用メールアドレス</li>
+          <li>Zoom、オンライン授業、LMSの限定URL</li>
+          <li>未公開論文や査読中の原稿</li>
+          <li>APIキー、アクセストークン、パスワード</li>
+          <li>掲載許可を得ていない顔写真</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>設定完了チェックリスト</h2>
+        <ul class="checklist">
+          <li>研究室用Organizationを作成した</li>
+          <li>Ownerを可能なら2名設定した</li>
+          <li>公開Pagesサイトの作成が許可されている</li>
+          <li><code>&lt;Organization名&gt;.github.io</code> という公開リポジトリを作成した</li>
+          <li><code>_config.yml</code> のURLとリポジトリ名を変更した</li>
+          <li>ローカルのファイルを <code>main</code> ブランチへpushした</li>
+          <li>Pagesの公開元を <code>main / (root)</code> に設定した</li>
+          <li>Actionsのデプロイが成功した</li>
+          <li>公開URLをブラウザで確認した</li>
+          <li>Ownerの二要素認証を有効にした</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>研究室Webサイト構築資料／Academic Pages + Jekyll + GitHub Pages</p>
+    </footer>
+  </article>
+</body>
+</html>

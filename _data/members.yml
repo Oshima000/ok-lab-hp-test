@@ -1,0 +1,27 @@
+- title: "教員"
+  people:
+    - name: "山田 太郎"
+      role: "准教授"
+      research: "人間中心AI、教育工学"
+      url: "/faculty/"
+
+- title: "大学院生"
+  people:
+    - name: "佐藤 花子"
+      role: "博士後期課程2年"
+      research: "説明可能な学習支援AI"
+    - name: "鈴木 次郎"
+      role: "博士前期課程2年"
+      research: "協働作業の可視化"
+    - name: "高橋 美咲"
+      role: "博士前期課程1年"
+      research: "対話型データ探索"
+
+- title: "学部生"
+  people:
+    - name: "田中 葵"
+      role: "学部4年"
+      research: "オンライン学習の振り返り支援"
+    - name: "伊藤 健"
+      role: "学部4年"
+      research: "地域データの可視化"

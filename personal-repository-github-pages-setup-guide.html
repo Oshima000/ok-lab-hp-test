@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>動作確認用：個人リポジトリでのGitHub Pages設定</title>
+  <meta name="description" content="Academic Pagesを個人のGitHubリポジトリで動作確認するための設定手順">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182230;
+      --muted: #596579;
+      --line: #d8dee8;
+      --surface: #fff;
+      --soft: #f5f7fa;
+      --accent: #1261a0;
+      --accent-soft: #eaf3fb;
+      --success: #176b45;
+      --success-soft: #e9f7ef;
+      --warning: #815600;
+      --warning-soft: #fff6df;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP",
+        "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    a { color: var(--accent); }
+
+    .page {
+      width: min(960px, calc(100% - 32px));
+      margin: 32px auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: 0 12px 30px rgb(26 44 68 / 8%);
+    }
+
+    header {
+      padding: 48px clamp(24px, 6vw, 64px) 40px;
+      color: #fff;
+      background: linear-gradient(135deg, #173b61, #1872a8);
+    }
+
+    header p {
+      max-width: 740px;
+      margin: 12px 0 0;
+      color: #e7f4fc;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.55rem);
+      line-height: 1.35;
+    }
+
+    h2 { margin: 0 0 16px; font-size: 1.45rem; line-height: 1.45; }
+    h3 { margin: 24px 0 8px; font-size: 1.08rem; }
+    p { margin: 0 0 16px; }
+    ul, ol { margin: 8px 0 16px; padding-left: 1.5em; }
+    li + li { margin-top: 6px; }
+
+    main { padding: 16px clamp(24px, 6vw, 64px) 56px; }
+
+    section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:last-child { border-bottom: 0; }
+
+    .summary, .note, .warning {
+      margin: 18px 0;
+      padding: 17px 19px;
+      border-radius: 8px;
+    }
+
+    .summary {
+      border-left: 5px solid var(--success);
+      background: var(--success-soft);
+    }
+
+    .note { background: var(--accent-soft); }
+    .warning { background: var(--warning-soft); color: #5f4100; }
+
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      margin: 0 0 14px;
+      padding-left: 42px;
+    }
+
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      top: 2px;
+      left: 0;
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    table {
+      width: 100%;
+      margin: 14px 0 20px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: var(--soft); }
+    .recommended { color: var(--success); font-weight: 700; }
+
+    code {
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      background: #edf1f5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 14px 0 20px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #17212e;
+      color: #f2f6fa;
+      line-height: 1.55;
+    }
+
+    pre code { padding: 0; background: transparent; color: inherit; }
+
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { position: relative; padding-left: 30px; }
+    .checklist li::before {
+      content: "□";
+      position: absolute;
+      left: 0;
+      color: var(--success);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 22px clamp(24px, 6vw, 64px);
+      background: #edf1f5;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 680px) {
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .page { width: 100%; margin: 0; border: 0; box-shadow: none; }
+      header { padding-top: 20px; background: #fff; color: #000; }
+      header p { color: #333; }
+      section { break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+      a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+    }
+  </style>
+</head>
+<body>
+  <article class="page">
+    <header>
+      <h1>動作確認用：個人リポジトリでのGitHub Pages設定</h1>
+      <p>研究室用Organizationへ移す前に、個人のGitHubアカウントでAcademic Pagesを公開して動作確認する手順です。</p>
+    </header>
+
+    <main>
+      <div class="summary">
+        <strong>推奨：</strong>個人アカウント内に <code>ok-lab-hp-test</code> のような通常名の公開リポジトリを作り、<strong>プロジェクトサイト</strong>として確認します。個人のトップページ用リポジトリを消費せず、本番用Organizationサイトとも分離できます。
+      </div>
+
+      <section>
+        <h2>1. 2つの公開方式を確認する</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>方式</th>
+              <th>リポジトリ名</th>
+              <th>公開URL</th>
+              <th>用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="recommended">プロジェクトサイト（推奨）</span></td>
+              <td><code>ok-lab-hp-test</code></td>
+              <td><code>https://USERNAME.github.io/ok-lab-hp-test/</code></td>
+              <td>今回の動作確認</td>
+            </tr>
+            <tr>
+              <td>個人ユーザーサイト</td>
+              <td><code>USERNAME.github.io</code></td>
+              <td><code>https://USERNAME.github.io/</code></td>
+              <td>個人の代表サイト</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>個人ユーザーサイトは1アカウントにつき1つです。すでに <code>USERNAME.github.io</code> を使っている場合は上書きせず、プロジェクトサイト方式を選びます。</p>
+        <p><a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/what-is-github-pages">GitHub公式：GitHub Pagesサイトの種類</a></p>
+      </section>
+
+      <section>
+        <h2>2. 事前に確認すること</h2>
+        <ul class="checklist">
+          <li>GitHubアカウントのメールアドレスが確認済みである</li>
+          <li>二要素認証を有効にしている</li>
+          <li>既存の <code>USERNAME.github.io</code> リポジトリの有無を確認した</li>
+          <li>公開してよい画像・文章だけがサイト内にある</li>
+        </ul>
+
+        <div class="warning">
+          完全無料のGitHub Freeで試す場合は、Pages用リポジトリを<strong>Public</strong>にします。ソースコード、Markdown、画像、設定ファイルも公開情報になるため、個人情報や秘密情報を含めないでください。
+        </div>
+        <p><a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/github-pages-limits">GitHub公式：GitHub Pagesの利用条件と制限</a></p>
+      </section>
+
+      <section>
+        <h2>3. 個人アカウントにテスト用リポジトリを作る</h2>
+        <ol class="steps">
+          <li>GitHub右上の <code>＋</code> → <code>New repository</code> を開きます。</li>
+          <li><code>Owner</code> に自分の個人アカウントを選択します。</li>
+          <li><code>Repository name</code> を <code>ok-lab-hp-test</code> などにします。</li>
+          <li><code>Visibility</code> は <code>Public</code> を選択します。</li>
+          <li>README、.gitignore、Licenseは追加せず、空のリポジトリを作ります。</li>
+        </ol>
+
+        <table>
+          <tbody>
+            <tr><th>項目</th><th>設定例</th></tr>
+            <tr><td>Owner</td><td><code>USERNAME</code></td></tr>
+            <tr><td>Repository name</td><td><code>ok-lab-hp-test</code></td></tr>
+            <tr><td>Description</td><td><code>Laboratory website test</code></td></tr>
+            <tr><td>Visibility</td><td><code>Public</code></td></tr>
+            <tr><td>Initialize this repository</td><td>すべて未選択</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          既にローカルにAcademic Pages一式があるため、GitHub側ではREADMEを作らない方が、最初のpush時の履歴競合を避けやすくなります。
+        </div>
+      </section>
+
+      <section>
+        <h2>4. テスト公開用に <code>_config.yml</code> を設定する</h2>
+        <p><code>USERNAME</code> を実際のGitHubユーザー名へ置き換えます。プロジェクトサイトでは、URLにリポジトリ名が付くため <code>baseurl</code> の設定が重要です。</p>
+        <pre><code>url: "https://USERNAME.github.io"
+baseurl: "/ok-lab-hp-test"
+repository: "USERNAME/ok-lab-hp-test"</code></pre>
+
+        <p>プロフィール欄のGitHubリンクも、必要に応じて変更します。</p>
+        <pre><code>author:
+  github: "USERNAME"</code></pre>
+
+        <div class="warning">
+          <code>baseurl</code> の先頭には <code>/</code> を付け、末尾には付けません。ここが空欄のままだと、CSSや画像へのリンクがルート基準になり、表示が崩れることがあります。
+        </div>
+      </section>
+
+      <section>
+        <h2>5. ローカルからGitHubへpushする</h2>
+        <p>このフォルダを初めてGit管理する場合は、次を実行します。</p>
+        <pre><code>cd /Users/t.oshima-hino/Repos/OK_lab_HP
+
+git init -b main
+git add .
+git commit -m "Initial test deployment"
+
+git remote add origin https://github.com/USERNAME/ok-lab-hp-test.git
+git push -u origin main</code></pre>
+
+        <p>すでにGit管理され、別の <code>origin</code> が登録されている場合は、既存の接続先を不用意に変更せず、テスト用の接続先を別名で追加できます。</p>
+        <pre><code>git remote add test https://github.com/USERNAME/ok-lab-hp-test.git
+git push -u test main</code></pre>
+
+        <div class="note">
+          認証を求められた場合は、ブラウザ認証、GitHub CLI、SSH、またはPersonal Access Tokenを使います。GitHubアカウントの通常のパスワードではpushできません。
+        </div>
+      </section>
+
+      <section>
+        <h2>6. GitHub Pagesを有効にする</h2>
+        <p>GitHub上でテスト用リポジトリを開き、次の順に進みます。</p>
+        <pre><code>Repository
+└─ Settings
+   └─ Pages
+      └─ Build and deployment</code></pre>
+
+        <table>
+          <tbody>
+            <tr><th>項目</th><th>設定</th></tr>
+            <tr><td>Source</td><td><code>Deploy from a branch</code></td></tr>
+            <tr><td>Branch</td><td><code>main</code></td></tr>
+            <tr><td>Folder</td><td><code>/(root)</code></td></tr>
+            <tr><td>Custom domain</td><td>空欄</td></tr>
+            <tr><td>Enforce HTTPS</td><td>有効</td></tr>
+          </tbody>
+        </table>
+
+        <p><code>Save</code> を押すと、GitHub Pagesのビルドが開始されます。</p>
+        <p><a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub公式：公開元を設定する</a></p>
+      </section>
+
+      <section>
+        <h2>7. 公開結果を確認する</h2>
+        <ol class="steps">
+          <li>リポジトリの <code>Actions</code> タブを開きます。</li>
+          <li><code>pages build and deployment</code> が緑色になるまで待ちます。</li>
+          <li><code>https://USERNAME.github.io/ok-lab-hp-test/</code> を開きます。</li>
+          <li>トップページ、Teaching、業績、メンバー、画像、ナビゲーションを確認します。</li>
+        </ol>
+
+        <h3>特に確認する箇所</h3>
+        <ul>
+          <li>CSSが適用され、レイアウトが崩れていない</li>
+          <li>プロフィール画像とページ内画像が表示される</li>
+          <li>各メニューから正しいページへ移動できる</li>
+          <li>Teachingの現在・過去の科目が表示される</li>
+          <li>スマートフォン幅でも閲覧できる</li>
+          <li>公開してはいけない情報が含まれていない</li>
+        </ul>
+
+        <p>変更をpushしてから反映まで最大10分程度かかる場合があります。</p>
+        <p><a href="https://docs.github.com/ja/pages/quickstart">GitHub公式：GitHub Pagesクイックスタート</a></p>
+      </section>
+
+      <section>
+        <h2>8. よくある問題</h2>
+        <table>
+          <thead>
+            <tr><th>症状</th><th>確認箇所</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>404になる</td><td>PagesのBranchが <code>main</code>、Folderが <code>/(root)</code> か確認</td></tr>
+            <tr><td>文字だけ表示される</td><td><code>baseurl: "/ok-lab-hp-test"</code> を確認</td></tr>
+            <tr><td>画像だけ表示されない</td><td>画像パスとファイル名の大文字・小文字を確認</td></tr>
+            <tr><td>ビルドに失敗する</td><td>Actionsのログと <code>_config.yml</code> のYAML構文を確認</td></tr>
+            <tr><td>変更が見えない</td><td>Actions完了後にブラウザを再読み込みし、キャッシュも確認</td></tr>
+          </tbody>
+        </table>
+        <p><a href="https://docs.github.com/ja/pages/getting-started-with-github-pages/troubleshooting-404-errors-for-github-pages-sites">GitHub公式：404エラーのトラブルシューティング</a></p>
+      </section>
+
+      <section>
+        <h2>9. 本番用Organizationへ移行する</h2>
+        <p>動作確認が完了したら、本番用Organizationの <code>&lt;Organization名&gt;.github.io</code> リポジトリへ同じサイトをpushします。その前に <code>_config.yml</code> を本番用へ戻します。</p>
+        <pre><code>url: "https://ORGANIZATION.github.io"
+baseurl: ""
+repository: "ORGANIZATION/ORGANIZATION.github.io"</code></pre>
+
+        <p>本番用接続先を追加してpushする例です。</p>
+        <pre><code>git remote add production https://github.com/ORGANIZATION/ORGANIZATION.github.io.git
+git push -u production main</code></pre>
+
+        <div class="note">
+          個人のテストサイトを残す場合、本番公開後に両方が検索結果へ出る可能性があります。検証が終わったら、テストリポジトリの <code>Settings → Pages</code> で公開を停止するか、リポジトリを削除することを検討してください。
+        </div>
+      </section>
+
+      <section>
+        <h2>最終チェックリスト</h2>
+        <ul class="checklist">
+          <li>個人アカウントに公開テスト用リポジトリを作った</li>
+          <li>既存の個人ユーザーサイトと競合していない</li>
+          <li><code>url</code>、<code>baseurl</code>、<code>repository</code> をテスト用に設定した</li>
+          <li><code>main</code> ブランチへpushした</li>
+          <li>Pagesを <code>main / (root)</code> から公開した</li>
+          <li>Actionsのデプロイが成功した</li>
+          <li>各ページ、画像、リンク、スマートフォン表示を確認した</li>
+          <li>本番移行時に <code>_config.yml</code> を本番用へ戻す予定を確認した</li>
+          <li>検証終了後のテストサイトの扱いを決めた</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>動作確認用資料／Academic Pages + Jekyll + GitHub Pages（個人リポジトリ）</p>
+    </footer>
+  </article>
+</body>
+</html>

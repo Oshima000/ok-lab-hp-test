@@ -1,0 +1,41 @@
+---
+layout: archive
+title: "担当科目"
+permalink: /teaching/
+author_profile: true
+---
+
+{% assign current_courses = site.teaching | where: "status", "current" | sort: "schedule_order" %}
+{% assign past_courses = site.teaching | where: "status", "past" | sort: "date" | reverse %}
+
+<h2>現在の担当科目</h2>
+
+<div class="teaching-list">
+{% for course in current_courses %}
+  <article class="teaching-card teaching-card--current">
+    <p class="teaching-card__eyebrow">{{ course.academic_year }}年度 {{ course.term }}</p>
+    <h3><a href="{{ course.url | relative_url }}">{{ course.title }}</a></h3>
+    <p class="teaching-card__schedule"><i class="fa-regular fa-clock" aria-hidden="true"></i> {{ course.schedule }}</p>
+    <p>{{ course.summary }}</p>
+    {% if course.syllabus_url %}<a class="btn btn--primary" href="{{ course.syllabus_url }}">公式シラバス</a>{% endif %}
+  </article>
+{% else %}
+  <p>現在掲載中の担当科目はありません。</p>
+{% endfor %}
+</div>
+
+<h2>過去に担当した科目</h2>
+
+<div class="teaching-list">
+{% for course in past_courses %}
+  <article class="teaching-card">
+    <p class="teaching-card__eyebrow">{{ course.academic_year }}年度まで</p>
+    <h3><a href="{{ course.url | relative_url }}">{{ course.title }}</a></h3>
+    <p>{{ course.summary }}</p>
+  </article>
+{% else %}
+  <p>過去の担当科目はまだ登録されていません。</p>
+{% endfor %}
+</div>
+
+<p class="notice--info">教室、休講、課題提出など履修者向けの情報は大学のLMSで確認してください。</p>
